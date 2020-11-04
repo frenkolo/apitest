@@ -4,7 +4,6 @@ namespace App\Domain\User\Service;
 
 use App\Domain\User\Repository\UserRepository;
 use App\Exception\ValidationException;
-use phpDocumentor\Reflection\Types\Array_;
 
 /**
  * Service.

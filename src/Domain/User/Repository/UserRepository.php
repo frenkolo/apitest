@@ -44,38 +44,13 @@ class UserRepository
     }
 
 
-    public function changePassword($user, $password): int
+    public function changePassword($email, $password): int
     {
-        $sql = "UPDATE apitest_users SET password=? WHERE username=?";
+        $sql = "UPDATE apitest_users SET password=? WHERE email=?";
         $stmt= $this->connection->prepare($sql);
-        $stmt->execute([hash("sha256", $password), $user]);
-       return $stmt->rowCount();
+        $stmt->execute([hash("sha256", $password), $email]);
+        return $stmt->rowCount();
     }
 
-    /**
-     * Insert user row.
-     *
-     * @param array $user The user
-     *
-     * @return int The new ID
-     */
-    public function insertUser(array $user): int
-    {
-        $row = [
-            'username' => $user['username'],
-            'first_name' => $user['first_name'],
-            'last_name' => $user['last_name'],
-            'email' => $user['email'],
-        ];
 
-        $sql = "INSERT INTO users SET 
-                username=:username, 
-                first_name=:first_name, 
-                last_name=:last_name, 
-                email=:email;";
-
-        $this->connection->prepare($sql)->execute($row);
-
-        return (int)$this->connection->lastInsertId();
-    }
 }

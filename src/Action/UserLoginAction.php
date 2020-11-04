@@ -12,6 +12,9 @@ final class UserLoginAction
 {
     private $userLogin;
 
+    const JWT_EXPIRE_MINUTES = 60*60;
+    const JWT_SECRET = 'Secret123!456$';
+
     public function __construct(UserLogin $userLogin)
     {
         $this->userLogin = $userLogin;
@@ -35,12 +38,14 @@ final class UserLoginAction
         }
         $factory = new \PsrJwt\Factory\Jwt();
         $builder = $factory->builder();
-        $token = $builder->setSecret('Secret123!456$')
+        $token = $builder->setSecret(self::JWT_SECRET)
             ->setPayloadClaim('uid', $res[0]["id"])
             ->setPayloadClaim('email', $res[0]["email"])
             ->setPayloadClaim('username', $res[0]["username"])
             ->setPayloadClaim('first_name', $res[0]["first_name"])
             ->setPayloadClaim('last_name', $res[0]["last_name"])
+            ->setPayloadClaim('role', $res[0]["role"])
+            ->setPayloadClaim('exp', time() + self::JWT_EXPIRE_MINUTES)
             ->build();
 
         $result = [
