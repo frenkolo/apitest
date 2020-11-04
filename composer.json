@@ -1,5 +1,6 @@
 {
     "require": {
+        "firebase/php-jwt": "^5.2",
         "php-di/php-di": "^6.3",
         "rbdwllr/psr-jwt": "^1.0",
         "selective/basepath": "^1.0",
