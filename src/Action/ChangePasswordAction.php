@@ -45,9 +45,14 @@ final class ChangePasswordAction
                 ->withStatus(401);
         }
 
-        $res = $this->changePassword->changePassword($data["username"], $data["password"]);
+        $res = null;
+        try {
+            $res = $this->changePassword->changePassword($data["username"], $data["password"]);
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+        }
 
-        if ($res == 0) {
+        if ($res === null) {
             $result = [ 'result' => 'KO', 'error' => 'operation failed (no records changed)'];
             $response->getBody()->write((string)json_encode($result));
             return $response
