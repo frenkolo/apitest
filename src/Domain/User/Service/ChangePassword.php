@@ -28,13 +28,7 @@ final class ChangePassword
 
     public function changePassword($username, $password): int
     {
-
-    //    echo "U:$username P:$password\n"; die();
-
         $res = $this->repository->changePassword($username, $password);
-
-        //$this->logger->info(sprintf('Login done'));
-
         return $res;
     }
 
