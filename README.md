@@ -10,11 +10,17 @@ Techincal details and software used:
 
 # Composer requirements
 
-composer require slim/slim:"4.*". 
-composer require slim/psr7. 
-composer require php-di/php-di. 
-composer require phpunit/phpunit --dev. 
-composer require selective/basepath. 
-composer require rbdwllr/psr-jwt. 
-composer require firebase/php-jwt. 
+composer require slim/slim:"4.*"  
+composer require slim/psr7  
+composer require php-di/php-di   
+composer require phpunit/phpunit --dev   
+composer require selective/basepath  
+composer require rbdwllr/psr-jwt  
+composer require firebase/php-jwt  
+
+
+# Documentation
+https://documenter.getpostman.com/view/3372297/TVYNZbHW
+
+ 
 

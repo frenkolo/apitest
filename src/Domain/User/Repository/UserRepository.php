@@ -3,8 +3,6 @@
 namespace App\Domain\User\Repository;
 
 use PDO;
-use phpDocumentor\Reflection\Types\Array_;
-use phpDocumentor\Reflection\Types\String_;
 
 /**
  * Repository.
@@ -37,16 +35,15 @@ class UserRepository
     {
         $sql = "SELECT * FROM apitest_users where username=".$this->connection->quote($user)
             . " AND password=".$this->connection->quote(hash("sha256", $password));
-
         $res = $this->connection->query($sql)->fetchAll();
-      //  var_dump($res);die();
         return $res;
     }
 
 
     public function changePassword($email, $password): int
     {
-        $sql = "UPDATE apitest_users SET password=? WHERE email=?";
+        $sql = "UPDATE apitest_users SET password=? WHERE username=?";
+       // echo "UPDATE apitest_users SET password=$password WHERE username=$email";
         $stmt= $this->connection->prepare($sql);
         $stmt->execute([hash("sha256", $password), $email]);
         return $stmt->rowCount();
