@@ -28,7 +28,7 @@ final class UserLoginAction
         $data = (array)$request->getParsedBody();
 
         // Invoke the Domain with inputs and retain the result
-        $res = $this->userLogin->loginUser($data["user"], $data["password"]);
+        $res = $this->userLogin->loginUser($data["username"], $data["password"]);
         if (count($res) == 0) {
             $result = [ 'result' => 'KO', 'error' => 'login failed'];
             $response->getBody()->write((string)json_encode($result));

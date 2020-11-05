@@ -10,7 +10,7 @@ use \Firebase\JWT\JWT;
 
 
 
-final class ChangePasswordAction
+final class ChangePermissionAction
 {
     const JWT_SECRET = 'Secret123!456$';
     const ROLE_ADMIN = 1;
@@ -18,11 +18,11 @@ final class ChangePasswordAction
     const ROLE_USER = 3;
 
 
-    private $changePassword;
+    private $changePermissionHandle;
 
-    public function __construct(ChangePassword $changePassword)
+    public function __construct(ChangePermissionAction $changePermissionAction)
     {
-        $this->changePassword = $changePassword;
+        $this->changePermissionHandle = $changePermissionAction;
     }
 
     public function __invoke(
@@ -45,10 +45,10 @@ final class ChangePasswordAction
                 ->withStatus(401);
         }
 
-        $res = $this->changePassword->changePassword($data["username"], $data["password"]);
+        $res = $this->changePassword->changePassword($data["user"], $data["password"]);
 
-        if ($res == 0) {
-            $result = [ 'result' => 'KO', 'error' => 'operation failed (no records changed)'];
+        if (count($res) == 0) {
+            $result = [ 'result' => 'KO', 'error' => 'operation failed'];
             $response->getBody()->write((string)json_encode($result));
             return $response
                 ->withHeader('Content-Type', 'application/json')
