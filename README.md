@@ -1,5 +1,5 @@
 # apitest
-Simple API set designed to show how JWT works.
+Simple API set designed to a working JWT authentication and authorization flow.
 Techincal details and software used:
 
 - Linux Ubuntu 18.04.3 LTS
@@ -8,7 +8,7 @@ Techincal details and software used:
 - Slim 4
 
 
-# Composer requirements
+# Composer external requirements
 
 composer require slim/slim:"4.*"  
 composer require slim/psr7  
