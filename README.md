@@ -17,6 +17,7 @@ composer require phpunit/phpunit --dev
 composer require selective/basepath  
 composer require rbdwllr/psr-jwt  
 composer require firebase/php-jwt  
+composer require guzzlehttp/guzzle
 
 
 # Documentation
