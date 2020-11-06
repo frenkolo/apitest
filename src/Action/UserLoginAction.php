@@ -52,6 +52,8 @@ final class UserLoginAction
             'result' => 'OK', 'token' => $token->getToken()
         ];
 
+        $this->userLogin->unbanUser($data["username"]);
+        
         $response->getBody()->write((string)json_encode($result));
 
         return $response

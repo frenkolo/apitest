@@ -4,12 +4,11 @@ namespace App\Domain\User\Service;
 
 use App\Domain\User\Repository\UserRepository;
 use App\Exception\ValidationException;
-use phpDocumentor\Reflection\Types\Array_;
 
 /**
  * Service.
  */
-final class UserLogin
+final class ChangePermission
 {
     /**
      * @var UserRepository
@@ -27,18 +26,10 @@ final class UserLogin
     }
 
 
-    public function loginUser($username, $password): Array
+    public function changePermission($username, $role): int
     {
-        $res = $this->repository->login($username, $password);
+        $res = $this->repository->changePermission($username, $role);
         return $res;
     }
-
-    public function unbanUser($username): int
-    {
-        $res = $this->repository->unban($username);
-        return $res;
-    }
-
-
 
 }

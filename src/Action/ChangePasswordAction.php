@@ -3,6 +3,8 @@
 namespace App\Action;
 
 use App\Domain\User\Service\ChangePassword;
+use App\Domain\User\Service\RefreshJwt;
+
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -19,10 +21,14 @@ final class ChangePasswordAction
 
 
     private $changePassword;
+    private $refreshJwt;
 
-    public function __construct(ChangePassword $changePassword)
+
+    public function __construct(ChangePassword $changePassword, RefreshJwt $refreshJwt)
     {
         $this->changePassword = $changePassword;
+        $this->refreshJwt = $refreshJwt;
+
     }
 
     public function __invoke(
@@ -37,7 +43,15 @@ final class ChangePasswordAction
         $jwt = str_replace('Bearer ', '', $headers["Authorization"][0]);
         $decodedJwt = JWT::decode($jwt, self::JWT_SECRET, array('HS256'));
 
-        if ($decodedJwt->email !== $data["user"] && (int)$decodedJwt->role !== self::ROLE_ADMIN) {
+        $userData = $this->refreshJwt->refreshJwt($decodedJwt->username);
+        if ($userData[0]["banned"] == 1) {
+            $result = [ 'result' => 'KO', 'error' => 'invalid session'];
+            $response->getBody()->write((string)json_encode($result));
+            return $response
+                ->withHeader('Content-Type', 'application/json')
+                ->withStatus(401);
+        }
+        if ($decodedJwt->email !== $data["username"] && $userData[0]["role"] != self::ROLE_ADMIN) {
             $result = [ 'result' => 'KO', 'error' => 'operation failed (not sufficient privileges)'];
             $response->getBody()->write((string)json_encode($result));
             return $response

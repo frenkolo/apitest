@@ -2,14 +2,14 @@
 
 namespace App\Action;
 
-use App\Domain\User\Service\ChangePermission;
+use App\Domain\User\Service\InvalidateToken;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use \Firebase\JWT\JWT;
 
 
 
-final class ChangePermissionAction
+final class InvalidateTokenAction
 {
     const JWT_SECRET = 'Secret123!456$';
     const ROLE_ADMIN = 1;
@@ -17,11 +17,11 @@ final class ChangePermissionAction
     const ROLE_USER = 3;
 
 
-    private $changePermissionHandle;
+    private $invalidateToken;
 
-    public function __construct(ChangePermission $changePermission)
+    public function __construct(InvalidateToken $invalidateToken)
     {
-        $this->changePermissionHandle = $changePermission;
+        $this->invalidateToken = $invalidateToken;
     }
 
     public function __invoke(
@@ -46,11 +46,13 @@ final class ChangePermissionAction
 
         $res = null;
         try {
-            $res = $this->changePermissionHandle->changePermission($data["username"], $data["role"]);
+            $username = isset($data["username"]) ? $data["username"] : null;
+            $res = $this->invalidateToken->invalidateToken($username);
         } catch (\Exception $e) {
             echo $e->getMessage();
         }
-        if ($res == null) {
+
+        if ($res === null) {
             $result = [ 'result' => 'KO', 'error' => 'operation failed'];
             $response->getBody()->write((string)json_encode($result));
             return $response

@@ -39,14 +39,55 @@ class UserRepository
         return $res;
     }
 
+    public function unban($email): int
+    {
+        $sql = "UPDATE apitest_users SET banned=? WHERE username=?";
+        $stmt= $this->connection->prepare($sql);
+        $stmt->execute([0, $email]);
+        return $stmt->rowCount();
+    }
 
     public function changePassword($email, $password): int
     {
         $sql = "UPDATE apitest_users SET password=? WHERE username=?";
-       // echo "UPDATE apitest_users SET password=$password WHERE username=$email";
         $stmt= $this->connection->prepare($sql);
         $stmt->execute([hash("sha256", $password), $email]);
         return $stmt->rowCount();
+    }
+
+    public function changePermission($email, $role): int
+    {
+        $sql = "UPDATE apitest_users SET role=? WHERE username=?";
+        $stmt= $this->connection->prepare($sql);
+        $stmt->execute([$role, $email]);
+        return $stmt->rowCount();
+    }
+
+    private function invalidateTokenGlobal()
+    {
+        $sql = "UPDATE apitest_users SET banned=?";
+        $stmt= $this->connection->prepare($sql);
+        $stmt->execute([1]);
+        return $stmt->rowCount();
+    }
+
+    public function invalidateToken($email): int
+    {
+        if ($email == null) {
+            return $this->invalidateTokenGlobal();
+        }
+        $sql = "UPDATE apitest_users SET banned=? WHERE username=?";
+        $stmt= $this->connection->prepare($sql);
+        $stmt->execute([1, $email]);
+        return $stmt->rowCount();
+    }
+
+
+    public function refreshJwt($username)
+    {
+        $sql = "SELECT * FROM  apitest_users where username=".$this->connection->quote($username);
+        $res = $this->connection->query($sql)->fetchAll();
+        return $res;
     }
 
 
