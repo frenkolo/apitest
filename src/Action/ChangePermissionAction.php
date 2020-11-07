@@ -3,6 +3,7 @@
 namespace App\Action;
 
 use App\Domain\User\Service\ChangePermission;
+use App\Domain\User\Service\RefreshJwt;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use \Firebase\JWT\JWT;
@@ -19,9 +20,10 @@ final class ChangePermissionAction
 
     private $changePermissionHandle;
 
-    public function __construct(ChangePermission $changePermission)
+    public function __construct(ChangePermission $changePermission, RefreshJwt $refreshJwt)
     {
         $this->changePermissionHandle = $changePermission;
+        $this->refreshJwt = $refreshJwt;
     }
 
     public function __invoke(
@@ -36,7 +38,16 @@ final class ChangePermissionAction
         $jwt = str_replace('Bearer ', '', $headers["Authorization"][0]);
         $decodedJwt = JWT::decode($jwt, self::JWT_SECRET, array('HS256'));
 
-        if ((int)$decodedJwt->role !== self::ROLE_ADMIN) {
+        $userData = $this->refreshJwt->refreshJwt($decodedJwt->username);
+        if ($userData[0]["banned"] == 1) {
+            $result = [ 'result' => 'KO', 'error' => 'invalid session'];
+            $response->getBody()->write((string)json_encode($result));
+            return $response
+                ->withHeader('Content-Type', 'application/json')
+                ->withStatus(401);
+        }
+
+        if ((int)$userData[0]["role"] !== self::ROLE_ADMIN) {
             $result = [ 'result' => 'KO', 'error' => 'operation failed (not sufficient privileges)'];
             $response->getBody()->write((string)json_encode($result));
             return $response
@@ -50,7 +61,7 @@ final class ChangePermissionAction
         } catch (\Exception $e) {
             echo $e->getMessage();
         }
-        if ($res == null) {
+        if ($res === null) {
             $result = [ 'result' => 'KO', 'error' => 'operation failed'];
             $response->getBody()->write((string)json_encode($result));
             return $response
